@@ -265,7 +265,7 @@ jobs:
     - name: Get SHA2-256SUMS for yt-dlp_win.zip
       id: sha256_win_zip
       run: echo "::set-output name=sha256_win_zip::$((Get-FileHash dist\yt-dlp_win.zip -Algorithm SHA256).Hash.ToLower())"
-    - name: Get SHA2-512SUMS for yt-dlp.zip
+    - name: Get SHA2-512SUMS for yt-dlp_win.zip
       id: sha512_win_zip
       run: echo "::set-output name=sha512_win_zip::$((Get-FileHash dist\yt-dlp_win.zip -Algorithm SHA512).Hash.ToLower())"
 
