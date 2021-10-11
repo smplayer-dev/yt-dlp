@@ -334,7 +334,7 @@ jobs:
         echo "${{ env.SHA256_MACOS_ZIP }}  yt-dlp_macos.zip" >> SHA2-256SUMS
         echo "${{ env.SHA256_BIN }}  yt-dlp" >> SHA2-256SUMS
         echo "${{ env.SHA256_TAR }}  yt-dlp.tar.gz" >> SHA2-256SUMS
-        echo "${{ env.SHA256_WIN_ZIP }}  yt-dlp.zip" >> SHA2-256SUMS
+        echo "${{ env.SHA256_WIN_ZIP }}  yt-dlp_win.zip" >> SHA2-256SUMS
     - name: Upload 256SUMS file
       id: upload-sums
       uses: actions/upload-release-asset@v1
@@ -361,7 +361,7 @@ jobs:
         echo "${{ env.SHA512_MACOS_ZIP }}  yt-dlp_macos.zip" >> SHA2-512SUMS
         echo "${{ env.SHA512_BIN }}  yt-dlp" >> SHA2-512SUMS
         echo "${{ env.SHA512_TAR }}  yt-dlp.tar.gz" >> SHA2-512SUMS
-        echo "${{ env.SHA512_WIN_ZIP }}  yt-dlp.zip" >> SHA2-512SUMS
+        echo "${{ env.SHA512_WIN_ZIP }}  yt-dlp_win.zip" >> SHA2-512SUMS
     - name: Upload 512SUMS file
       id: upload-512sums
       uses: actions/upload-release-asset@v1
