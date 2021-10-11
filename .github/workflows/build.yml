@@ -155,7 +155,7 @@ jobs:
     #      python-version: '3.9'
     - name: Install Requirements
       run: |
-          brew uninstall python3
+          brew uninstall --ignore-dependencies python3
           brew install coreutils
           #/usr/bin/pip3 install --user Pyinstaller mutagen pycryptodomex websockets
           pip3 install --user Pyinstaller mutagen pycryptodomex websockets
