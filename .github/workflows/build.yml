@@ -149,12 +149,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-          python-version: '3.9'
+    #- name: Set up Python
+    #  uses: actions/setup-python@v2
+    #  with:
+    #      python-version: '3.9'
     - name: Install Requirements
       run: |
+          brew uninstall python3
           brew install coreutils
           #/usr/bin/pip3 install --user Pyinstaller mutagen pycryptodomex websockets
           pip3 install --user Pyinstaller mutagen pycryptodomex websockets
