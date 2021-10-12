@@ -206,10 +206,14 @@ def run_update(ydl):
             os.rename(exe + '.old', exe)
             return
         try:
-            # Continues to run in the background
-            subprocess.Popen(
-                'ping 127.0.0.1 -n 5 -w 1000 & del /F "%s.old"' % exe,
-                shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if platform.system() == 'Darwin':
+                os.remove(exe + '.old')
+                os.chmod(exe, 0o755)
+            else:
+                # Continues to run in the background
+                subprocess.Popen(
+                    'ping 127.0.0.1 -n 5 -w 1000 & del /F "%s.old"' % exe,
+                    shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             ydl.to_screen('Updated yt-dlp to version %s' % version_id)
             return True  # Exit app
         except OSError:
