@@ -70,7 +70,8 @@ def run_update(ydl):
     Returns whether the program should terminate
     """
 
-    JSON_URL = 'https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest'
+    #JSON_URL = 'https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest'
+    JSON_URL = 'https://api.github.com/repos/smplayer-dev/yt-dlp/releases/latest'
 
     def report_error(msg, expected=False):
         ydl.report_error(msg, tb='' if expected else None)
@@ -124,6 +125,7 @@ def run_update(ydl):
         'zip_3': '',
         'exe_64': '.exe',
         'exe_32': '_x86.exe',
+        'mac_64': '_macos',
     }
 
     def get_bin_info(bin_or_exe, version):
@@ -132,6 +134,7 @@ def run_update(ydl):
 
     def get_sha256sum(bin_or_exe, version):
         filename = 'yt-dlp%s' % version_labels['%s_%s' % (bin_or_exe, version)]
+        print("filename: {}".format(filename))
         urlh = next(
             (i for i in version_info['assets'] if i['name'] in ('SHA2-256SUMS')),
             {}).get('browser_download_url')
@@ -157,7 +160,11 @@ def run_update(ydl):
 
         try:
             arch = platform.architecture()[0][:2]
-            url = get_bin_info('exe', arch).get('browser_download_url')
+            #print(version_info)
+            if platform.system() == 'Darwin':
+                url = get_bin_info('mac', arch).get('browser_download_url')
+            else:
+                url = get_bin_info('exe', arch).get('browser_download_url')
             if not url:
                 return report_network_error('fetch updates')
             urlh = ydl._opener.open(url)
@@ -166,7 +173,9 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_network_error('download latest version')
 
-        if not os.access(exe + '.new', os.W_OK):
+        print("url: {}".format(url))
+        if not os.access(directory, os.W_OK):
+        #if not os.access(exe + '.new', os.W_OK):
             return report_permission_error(f'{exe}.new')
         try:
             with open(exe + '.new', 'wb') as outf:
@@ -174,7 +183,10 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_unable('write the new version')
 
-        expected_sum = get_sha256sum('exe', arch)
+        if platform.system() == 'Darwin':
+            expected_sum = get_sha256sum('mac', arch)
+        else:
+            expected_sum = get_sha256sum('exe', arch)
         if not expected_sum:
             ydl.report_warning('no hash information found for the release')
         elif calc_sha256sum(exe + '.new') != expected_sum:
