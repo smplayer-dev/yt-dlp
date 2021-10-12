@@ -33,7 +33,8 @@ jobs:
     - name: Bump version
       id: bump_version
       run: |
-        python devscripts/update-version.py
+        #python devscripts/update-version.py
+        echo ::set-output name=ytdlp_version::2021.10.12
         make issuetemplates
     - name: Print version
       run: echo "${{ steps.bump_version.outputs.ytdlp_version }}"
