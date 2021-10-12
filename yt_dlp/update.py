@@ -158,13 +158,11 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_unable('remove the old version')
 
+        bin_type = 'mac' if platform.system() == 'Darwin' else 'exe'
         try:
             arch = platform.architecture()[0][:2]
             #print(version_info)
-            if platform.system() == 'Darwin':
-                url = get_bin_info('mac', arch).get('browser_download_url')
-            else:
-                url = get_bin_info('exe', arch).get('browser_download_url')
+            url = get_bin_info(bin_type, arch).get('browser_download_url')
             if not url:
                 return report_network_error('fetch updates')
             urlh = ydl._opener.open(url)
@@ -183,10 +181,7 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_unable('write the new version')
 
-        if platform.system() == 'Darwin':
-            expected_sum = get_sha256sum('mac', arch)
-        else:
-            expected_sum = get_sha256sum('exe', arch)
+        expected_sum = get_sha256sum(bin_type, arch)
         if not expected_sum:
             ydl.report_warning('no hash information found for the release')
         elif calc_sha256sum(exe + '.new') != expected_sum:
