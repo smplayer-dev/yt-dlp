@@ -36,7 +36,10 @@ def detect_variant():
         if getattr(sys, '_MEIPASS', None):
             if sys._MEIPASS == os.path.dirname(sys.executable):
                 return 'dir'
-            return 'exe'
+            if platform.system() == 'Darwin':
+                return 'mac_bin'
+            else:
+                return 'exe'
         return 'py2exe'
     elif isinstance(globals().get('__loader__'), zipimporter):
         return 'zip'
@@ -48,6 +51,7 @@ def detect_variant():
 _NON_UPDATEABLE_REASONS = {
     'exe': None,
     'zip': None,
+    'mac_bin': 'Auto-update is currently not supported for MacOS standalone binary; Re-download the latest release',
     'dir': 'Auto-update is not supported for unpackaged windows executable; Re-download the latest release',
     'py2exe': 'There is no official release for py2exe executable; Build it again with the latest source code',
     'source': 'You cannot update when running from source code; Use git to pull the latest changes',
