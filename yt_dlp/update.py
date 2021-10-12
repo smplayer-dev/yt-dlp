@@ -172,9 +172,13 @@ def run_update(ydl):
             return report_network_error('download latest version')
 
         print("url: {}".format(url))
-        if not os.access(directory, os.W_OK):
-        #if not os.access(exe + '.new', os.W_OK):
-            return report_permission_error(f'{exe}.new')
+        if os.path.exists(exe + '.new'):
+            if not os.access(exe + '.new', os.W_OK):
+                return report_permission_error(f'{exe}.new')
+        else:
+            if not os.access(directory, os.W_OK):
+                return report_permission_error(f'{exe}.new')
+
         try:
             with open(exe + '.new', 'wb') as outf:
                 outf.write(newcontent)
