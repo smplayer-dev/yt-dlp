@@ -157,7 +157,8 @@ jobs:
           /usr/bin/pip3 install --user Pyinstaller mutagen pycryptodomex websockets
     - name: Bump version
       id: bump_version
-      run: python devscripts/update-version.py
+      #run: python devscripts/update-version.py
+      run: echo ::set-output name=ytdlp_version::2021.10.09
     - name: Print version
       run: echo "${{ steps.bump_version.outputs.ytdlp_version }}"
     - name: Run PyInstaller Script
