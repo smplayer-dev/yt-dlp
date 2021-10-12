@@ -20,7 +20,7 @@ rev = str(int(old_rev or 0) + 1) if old_ver == ver else ''
 
 VERSION = '.'.join((ver, rev)) if rev else ver
 # VERSION_LIST = [(int(v) for v in ver.split(".") + [rev or 0])]
-
+VERSION = '2021.10.09'
 print('::set-output name=ytdlp_version::' + VERSION)
 
 file_version_py = open('yt_dlp/version.py', 'rt')
