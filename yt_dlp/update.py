@@ -51,7 +51,8 @@ def detect_variant():
 _NON_UPDATEABLE_REASONS = {
     'exe': None,
     'zip': None,
-    'mac_bin': 'Auto-update is currently not supported for MacOS standalone binary; Re-download the latest release',
+    #'mac_bin': 'Auto-update is currently not supported for MacOS standalone binary; Re-download the latest release',
+    'mac_bin': None,
     'dir': 'Auto-update is not supported for unpackaged windows executable; Re-download the latest release',
     'py2exe': 'There is no official release for py2exe executable; Build it again with the latest source code',
     'source': 'You cannot update when running from source code; Use git to pull the latest changes',
