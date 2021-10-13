@@ -171,13 +171,10 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_network_error('download latest version')
 
-        if not os.access(exe + '.new', os.W_OK):
-            return report_permission_error(f'{exe}.new')
         try:
             with open(exe + '.new', 'wb') as outf:
                 outf.write(newcontent)
         except (IOError, OSError):
-            #return report_unable('write the new version')
             return report_permission_error(f'{exe}.new')
 
         expected_sum = get_sha256sum(bin_type, arch)
