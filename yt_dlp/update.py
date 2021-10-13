@@ -51,7 +51,6 @@ def detect_variant():
 _NON_UPDATEABLE_REASONS = {
     'exe': None,
     'zip': None,
-    #'mac_bin': 'Auto-update is currently not supported for MacOS standalone binary; Re-download the latest release',
     'mac_bin': None,
     'dir': 'Auto-update is not supported for unpackaged windows executable; Re-download the latest release',
     'py2exe': 'There is no official release for py2exe executable; Build it again with the latest source code',
@@ -70,8 +69,7 @@ def run_update(ydl):
     Returns whether the program should terminate
     """
 
-    #JSON_URL = 'https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest'
-    JSON_URL = 'https://api.github.com/repos/smplayer-dev/yt-dlp/releases/latest'
+    JSON_URL = 'https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest'
 
     def report_error(msg, expected=False):
         ydl.report_error(msg, tb='' if expected else None)
@@ -134,7 +132,6 @@ def run_update(ydl):
 
     def get_sha256sum(bin_or_exe, version):
         filename = 'yt-dlp%s' % version_labels['%s_%s' % (bin_or_exe, version)]
-        print("filename: {}".format(filename))
         urlh = next(
             (i for i in version_info['assets'] if i['name'] in ('SHA2-256SUMS')),
             {}).get('browser_download_url')
@@ -161,7 +158,6 @@ def run_update(ydl):
         bin_type = 'mac' if platform.system() == 'Darwin' else 'exe'
         try:
             arch = platform.architecture()[0][:2]
-            #print(version_info)
             url = get_bin_info(bin_type, arch).get('browser_download_url')
             if not url:
                 return report_network_error('fetch updates')
