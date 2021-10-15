@@ -203,7 +203,7 @@ def run_update(ydl):
         except OSError:
             report_unable('delete the old version')
 
-    # Zip unix package
+    # Zip unix or Mac OS binary package
     elif isinstance(globals().get('__loader__'), zipimporter) or \
          (hasattr(sys, 'frozen') and platform.system() == 'Darwin'):
         pack_type = ['mac', '64'] if hasattr(sys, 'frozen') else ['zip', '3']
@@ -221,7 +221,7 @@ def run_update(ydl):
         if not expected_sum:
             ydl.report_warning('no hash information found for the release')
         elif hashlib.sha256(newcontent).hexdigest() != expected_sum:
-            return report_network_error('verify the new zip')
+            return report_network_error('verify the new package')
 
         try:
             with open(filename, 'wb') as outf:
