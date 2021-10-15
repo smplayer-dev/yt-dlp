@@ -69,7 +69,8 @@ def run_update(ydl):
     Returns whether the program should terminate
     """
 
-    JSON_URL = 'https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest'
+    #JSON_URL = 'https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest'
+    JSON_URL = 'https://api.github.com/repos/smplayer-dev/yt-dlp/releases/latest'
 
     def report_error(msg, expected=False):
         ydl.report_error(msg, tb='' if expected else None)
@@ -155,10 +156,9 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_unable('remove the old version')
 
-        bin_type = 'mac' if platform.system() == 'Darwin' else 'exe'
         try:
             arch = platform.architecture()[0][:2]
-            url = get_bin_info(bin_type, arch).get('browser_download_url')
+            url = get_bin_info('exe', arch).get('browser_download_url')
             if not url:
                 return report_network_error('fetch updates')
             urlh = ydl._opener.open(url)
@@ -173,7 +173,7 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_permission_error(f'{exe}.new')
 
-        expected_sum = get_sha256sum(bin_type, arch)
+        expected_sum = get_sha256sum('exe', arch)
         if not expected_sum:
             ydl.report_warning('no hash information found for the release')
         elif calc_sha256sum(exe + '.new') != expected_sum:
@@ -194,14 +194,10 @@ def run_update(ydl):
             os.rename(exe + '.old', exe)
             return
         try:
-            if platform.system() == 'Darwin':
-                os.remove(exe + '.old')
-                os.chmod(exe, 0o755)
-            else:
-                # Continues to run in the background
-                subprocess.Popen(
-                    'ping 127.0.0.1 -n 5 -w 1000 & del /F "%s.old"' % exe,
-                    shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Continues to run in the background
+            subprocess.Popen(
+                'ping 127.0.0.1 -n 5 -w 1000 & del /F "%s.old"' % exe,
+                shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             ydl.to_screen('Updated yt-dlp to version %s' % version_id)
             return True  # Exit app
         except OSError:
