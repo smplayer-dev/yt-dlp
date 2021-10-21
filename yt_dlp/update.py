@@ -10,7 +10,7 @@ import traceback
 from zipimport import zipimporter
 
 from .compat import compat_realpath
-from .utils import encode_compat_str
+from .utils import encode_compat_str, Popen
 
 from .version import __version__
 
@@ -33,13 +33,11 @@ def rsa_verify(message, signature, key):
 
 def detect_variant():
     if hasattr(sys, 'frozen'):
+        prefix = 'mac' if sys.platform == 'darwin' else 'win'
         if getattr(sys, '_MEIPASS', None):
             if sys._MEIPASS == os.path.dirname(sys.executable):
-                return 'dir'
-            if platform.system() == 'Darwin':
-                return 'mac_bin'
-            else:
-                return 'exe'
+                return f'{prefix}_dir'
+            return f'{prefix}_exe'
         return 'py2exe'
     elif isinstance(globals().get('__loader__'), zipimporter):
         return 'zip'
@@ -49,10 +47,11 @@ def detect_variant():
 
 
 _NON_UPDATEABLE_REASONS = {
-    'exe': None,
+    'win_exe': None,
     'zip': None,
-    'mac_bin': None,
-    'dir': 'Auto-update is not supported for unpackaged windows executable; Re-download the latest release',
+    'mac_exe': None,
+    'win_dir': 'Auto-update is not supported for unpackaged windows executable; Re-download the latest release',
+    'mac_dir': 'Auto-update is not supported for unpackaged MacOS executable; Re-download the latest release',
     'py2exe': 'There is no official release for py2exe executable; Build it again with the latest source code',
     'source': 'You cannot update when running from source code; Use git to pull the latest changes',
     'unknown': 'It looks like you installed yt-dlp with a package manager, pip, setup.py or a tarball; Use that to update',
@@ -145,7 +144,7 @@ def run_update(ydl):
 
     # PyInstaller
     variant = detect_variant()
-    if variant == 'exe':
+    if variant == 'win_exe':
         exe = filename
         directory = os.path.dirname(exe)
         if not os.access(directory, os.W_OK):
@@ -195,7 +194,7 @@ def run_update(ydl):
             return
         try:
             # Continues to run in the background
-            subprocess.Popen(
+            Popen(
                 'ping 127.0.0.1 -n 5 -w 1000 & del /F "%s.old"' % exe,
                 shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             ydl.to_screen('Updated yt-dlp to version %s' % version_id)
@@ -203,9 +202,8 @@ def run_update(ydl):
         except OSError:
             report_unable('delete the old version')
 
-    # Zip unix or Mac OS binary package
-    elif variant in ('zip', 'mac_bin'):
-        pack_type = ('mac', '64') if variant == 'mac_bin' else ('zip', '3')
+    elif variant in ('zip', 'mac_exe'):
+        pack_type = ('mac', '64') if variant == 'mac_exe' else ('zip', '3')
         try:
             url = get_bin_info(*pack_type).get('browser_download_url')
             if not url:
@@ -228,7 +226,10 @@ def run_update(ydl):
         except (IOError, OSError):
             return report_unable('overwrite current version')
 
-    ydl.to_screen('Updated yt-dlp to version %s; Restart yt-dlp to use the new version' % version_id)
+        ydl.to_screen('Updated yt-dlp to version %s; Restart yt-dlp to use the new version' % version_id)
+        return
+
+    assert False, f'Unhandled variant: {variant}'
 
 
 '''  # UNUSED
