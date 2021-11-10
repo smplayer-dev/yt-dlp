@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - release
@@ -34,6 +35,7 @@ jobs:
     - name: Print version
       run: echo "${{ steps.bump_version.outputs.ytdlp_version }}"
     - name: Update master
+      if: ${{false}}
       id: push_update
       run: |
         git config --global user.email "${{ github.event.pusher.email }}"
@@ -146,7 +148,7 @@ jobs:
   build_macos:
     runs-on: macos-11
     needs: build_unix
-    if: False
+    #if: False
     outputs:
       sha256_macos: ${{ steps.sha256_macos.outputs.sha256_macos }}
       sha512_macos: ${{ steps.sha512_macos.outputs.sha512_macos }}
@@ -159,7 +161,7 @@ jobs:
     - name: Install Requirements
       run: |
           brew install coreutils
-          /usr/bin/python3 -m pip install -U --user pip Pyinstaller mutagen pycryptodomex websockets
+          /usr/bin/python3 -m pip install -U --user pip Pyinstaller==4.5.1 mutagen pycryptodomex websockets
     - name: Bump version
       id: bump_version
       run: /usr/bin/python3 devscripts/update-version.py
