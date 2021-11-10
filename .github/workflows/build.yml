@@ -38,6 +38,7 @@ jobs:
     - name: Print version
       run: echo "${{ steps.bump_version.outputs.ytdlp_version }}"
     - name: Update master
+      if: ${{false}}
       id: push_update
       run: |
         git config --global user.email "${{ github.event.pusher.email }}"
