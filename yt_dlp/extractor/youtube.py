@@ -39,6 +39,7 @@ from ..utils import (
     int_or_none,
     intlist_to_bytes,
     is_html,
+    join_nonempty,
     mimetype2ext,
     network_exceptions,
     orderedSet,
@@ -257,6 +258,70 @@ class YoutubeBaseInfoExtractor(InfoExtractor):
 
     # If True it will raise an error if no login info is provided
     _LOGIN_REQUIRED = False
+
+    _INVIDIOUS_SITES = (
+        # invidious-redirect websites
+        r'(?:www\.)?redirect\.invidious\.io',
+        r'(?:(?:www|dev)\.)?invidio\.us',
+        # Invidious instances taken from https://github.com/iv-org/documentation/blob/master/Invidious-Instances.md
+        r'(?:www\.)?invidious\.pussthecat\.org',
+        r'(?:www\.)?invidious\.zee\.li',
+        r'(?:www\.)?invidious\.ethibox\.fr',
+        r'(?:www\.)?invidious\.3o7z6yfxhbw7n3za4rss6l434kmv55cgw2vuziwuigpwegswvwzqipyd\.onion',
+        # youtube-dl invidious instances list
+        r'(?:(?:www|no)\.)?invidiou\.sh',
+        r'(?:(?:www|fi)\.)?invidious\.snopyta\.org',
+        r'(?:www\.)?invidious\.kabi\.tk',
+        r'(?:www\.)?invidious\.mastodon\.host',
+        r'(?:www\.)?invidious\.zapashcanon\.fr',
+        r'(?:www\.)?(?:invidious(?:-us)?|piped)\.kavin\.rocks',
+        r'(?:www\.)?invidious\.tinfoil-hat\.net',
+        r'(?:www\.)?invidious\.himiko\.cloud',
+        r'(?:www\.)?invidious\.reallyancient\.tech',
+        r'(?:www\.)?invidious\.tube',
+        r'(?:www\.)?invidiou\.site',
+        r'(?:www\.)?invidious\.site',
+        r'(?:www\.)?invidious\.xyz',
+        r'(?:www\.)?invidious\.nixnet\.xyz',
+        r'(?:www\.)?invidious\.048596\.xyz',
+        r'(?:www\.)?invidious\.drycat\.fr',
+        r'(?:www\.)?inv\.skyn3t\.in',
+        r'(?:www\.)?tube\.poal\.co',
+        r'(?:www\.)?tube\.connect\.cafe',
+        r'(?:www\.)?vid\.wxzm\.sx',
+        r'(?:www\.)?vid\.mint\.lgbt',
+        r'(?:www\.)?vid\.puffyan\.us',
+        r'(?:www\.)?yewtu\.be',
+        r'(?:www\.)?yt\.elukerio\.org',
+        r'(?:www\.)?yt\.lelux\.fi',
+        r'(?:www\.)?invidious\.ggc-project\.de',
+        r'(?:www\.)?yt\.maisputain\.ovh',
+        r'(?:www\.)?ytprivate\.com',
+        r'(?:www\.)?invidious\.13ad\.de',
+        r'(?:www\.)?invidious\.toot\.koeln',
+        r'(?:www\.)?invidious\.fdn\.fr',
+        r'(?:www\.)?watch\.nettohikari\.com',
+        r'(?:www\.)?invidious\.namazso\.eu',
+        r'(?:www\.)?invidious\.silkky\.cloud',
+        r'(?:www\.)?invidious\.exonip\.de',
+        r'(?:www\.)?invidious\.riverside\.rocks',
+        r'(?:www\.)?invidious\.blamefran\.net',
+        r'(?:www\.)?invidious\.moomoo\.de',
+        r'(?:www\.)?ytb\.trom\.tf',
+        r'(?:www\.)?yt\.cyberhost\.uk',
+        r'(?:www\.)?kgg2m7yk5aybusll\.onion',
+        r'(?:www\.)?qklhadlycap4cnod\.onion',
+        r'(?:www\.)?axqzx4s6s54s32yentfqojs3x5i7faxza6xo3ehd4bzzsg2ii4fv2iid\.onion',
+        r'(?:www\.)?c7hqkpkpemu6e7emz5b4vyz7idjgdvgaaa3dyimmeojqbgpea3xqjoid\.onion',
+        r'(?:www\.)?fz253lmuao3strwbfbmx46yu7acac2jz27iwtorgmbqlkurlclmancad\.onion',
+        r'(?:www\.)?invidious\.l4qlywnpwqsluw65ts7md3khrivpirse744un3x7mlskqauz5pyuzgqd\.onion',
+        r'(?:www\.)?owxfohz4kjyv25fvlqilyxast7inivgiktls3th44jhk3ej3i7ya\.b32\.i2p',
+        r'(?:www\.)?4l2dgddgsrkf2ous66i6seeyi6etzfgrue332grh2n7madpwopotugyd\.onion',
+        r'(?:www\.)?w6ijuptxiku4xpnnaetxvnkc5vqcdu7mgns2u77qefoixi63vbvnpnqd\.onion',
+        r'(?:www\.)?kbjggqkzv65ivcqj6bumvp337z6264huv5kpkwuv6gu5yjiskvan7fad\.onion',
+        r'(?:www\.)?grwp24hodrefzvjjuccrkw3mjq4tzhaaq32amf33dzpmuxe7ilepcmad\.onion',
+        r'(?:www\.)?hpniueoejy4opn7bc4ftgazyqjoeqwlvh2uiku2xqku6zpoa4bf5ruid\.onion',
+    )
 
     def _login(self):
         """
@@ -695,70 +760,7 @@ class YoutubeBaseInfoExtractor(InfoExtractor):
 
 
 class YoutubeIE(YoutubeBaseInfoExtractor):
-    IE_DESC = 'YouTube.com'
-    _INVIDIOUS_SITES = (
-        # invidious-redirect websites
-        r'(?:www\.)?redirect\.invidious\.io',
-        r'(?:(?:www|dev)\.)?invidio\.us',
-        # Invidious instances taken from https://github.com/iv-org/documentation/blob/master/Invidious-Instances.md
-        r'(?:www\.)?invidious\.pussthecat\.org',
-        r'(?:www\.)?invidious\.zee\.li',
-        r'(?:www\.)?invidious\.ethibox\.fr',
-        r'(?:www\.)?invidious\.3o7z6yfxhbw7n3za4rss6l434kmv55cgw2vuziwuigpwegswvwzqipyd\.onion',
-        # youtube-dl invidious instances list
-        r'(?:(?:www|no)\.)?invidiou\.sh',
-        r'(?:(?:www|fi)\.)?invidious\.snopyta\.org',
-        r'(?:www\.)?invidious\.kabi\.tk',
-        r'(?:www\.)?invidious\.mastodon\.host',
-        r'(?:www\.)?invidious\.zapashcanon\.fr',
-        r'(?:www\.)?(?:invidious(?:-us)?|piped)\.kavin\.rocks',
-        r'(?:www\.)?invidious\.tinfoil-hat\.net',
-        r'(?:www\.)?invidious\.himiko\.cloud',
-        r'(?:www\.)?invidious\.reallyancient\.tech',
-        r'(?:www\.)?invidious\.tube',
-        r'(?:www\.)?invidiou\.site',
-        r'(?:www\.)?invidious\.site',
-        r'(?:www\.)?invidious\.xyz',
-        r'(?:www\.)?invidious\.nixnet\.xyz',
-        r'(?:www\.)?invidious\.048596\.xyz',
-        r'(?:www\.)?invidious\.drycat\.fr',
-        r'(?:www\.)?inv\.skyn3t\.in',
-        r'(?:www\.)?tube\.poal\.co',
-        r'(?:www\.)?tube\.connect\.cafe',
-        r'(?:www\.)?vid\.wxzm\.sx',
-        r'(?:www\.)?vid\.mint\.lgbt',
-        r'(?:www\.)?vid\.puffyan\.us',
-        r'(?:www\.)?yewtu\.be',
-        r'(?:www\.)?yt\.elukerio\.org',
-        r'(?:www\.)?yt\.lelux\.fi',
-        r'(?:www\.)?invidious\.ggc-project\.de',
-        r'(?:www\.)?yt\.maisputain\.ovh',
-        r'(?:www\.)?ytprivate\.com',
-        r'(?:www\.)?invidious\.13ad\.de',
-        r'(?:www\.)?invidious\.toot\.koeln',
-        r'(?:www\.)?invidious\.fdn\.fr',
-        r'(?:www\.)?watch\.nettohikari\.com',
-        r'(?:www\.)?invidious\.namazso\.eu',
-        r'(?:www\.)?invidious\.silkky\.cloud',
-        r'(?:www\.)?invidious\.exonip\.de',
-        r'(?:www\.)?invidious\.riverside\.rocks',
-        r'(?:www\.)?invidious\.blamefran\.net',
-        r'(?:www\.)?invidious\.moomoo\.de',
-        r'(?:www\.)?ytb\.trom\.tf',
-        r'(?:www\.)?yt\.cyberhost\.uk',
-        r'(?:www\.)?kgg2m7yk5aybusll\.onion',
-        r'(?:www\.)?qklhadlycap4cnod\.onion',
-        r'(?:www\.)?axqzx4s6s54s32yentfqojs3x5i7faxza6xo3ehd4bzzsg2ii4fv2iid\.onion',
-        r'(?:www\.)?c7hqkpkpemu6e7emz5b4vyz7idjgdvgaaa3dyimmeojqbgpea3xqjoid\.onion',
-        r'(?:www\.)?fz253lmuao3strwbfbmx46yu7acac2jz27iwtorgmbqlkurlclmancad\.onion',
-        r'(?:www\.)?invidious\.l4qlywnpwqsluw65ts7md3khrivpirse744un3x7mlskqauz5pyuzgqd\.onion',
-        r'(?:www\.)?owxfohz4kjyv25fvlqilyxast7inivgiktls3th44jhk3ej3i7ya\.b32\.i2p',
-        r'(?:www\.)?4l2dgddgsrkf2ous66i6seeyi6etzfgrue332grh2n7madpwopotugyd\.onion',
-        r'(?:www\.)?w6ijuptxiku4xpnnaetxvnkc5vqcdu7mgns2u77qefoixi63vbvnpnqd\.onion',
-        r'(?:www\.)?kbjggqkzv65ivcqj6bumvp337z6264huv5kpkwuv6gu5yjiskvan7fad\.onion',
-        r'(?:www\.)?grwp24hodrefzvjjuccrkw3mjq4tzhaaq32amf33dzpmuxe7ilepcmad\.onion',
-        r'(?:www\.)?hpniueoejy4opn7bc4ftgazyqjoeqwlvh2uiku2xqku6zpoa4bf5ruid\.onion',
-    )
+    IE_DESC = 'YouTube'
     _VALID_URL = r"""(?x)^
                      (
                          (?:https?://|//)                                    # http(s):// or protocol-independent URL
@@ -792,7 +794,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                      (?P<id>[0-9A-Za-z_-]{11})                                # here is it! the YouTube video ID
                      (?(1).+)?                                                # if we found the ID, everything can follow
                      (?:\#|$)""" % {
-        'invidious': '|'.join(_INVIDIOUS_SITES),
+        'invidious': '|'.join(YoutubeBaseInfoExtractor._INVIDIOUS_SITES),
     }
     _PLAYER_INFO_RE = (
         r'/s/player/(?P<id>[a-zA-Z0-9_-]{8,})/player',
@@ -1720,7 +1722,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             raise ExtractorError('Cannot identify player %r' % player_url)
         return id_m.group('id')
 
-    def _load_player(self, video_id, player_url, fatal=True) -> bool:
+    def _load_player(self, video_id, player_url, fatal=True):
         player_id = self._extract_player_info(player_url)
         if player_id not in self._code_cache:
             code = self._download_webpage(
@@ -1729,7 +1731,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 errnote='Download of %s failed' % player_url)
             if code:
                 self._code_cache[player_id] = code
-        return player_id in self._code_cache
+        return self._code_cache.get(player_id)
 
     def _extract_signature_function(self, video_id, player_url, example_sig):
         player_id = self._extract_player_info(player_url)
@@ -1743,8 +1745,8 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
         if cache_spec is not None:
             return lambda s: ''.join(s[i] for i in cache_spec)
 
-        if self._load_player(video_id, player_url):
-            code = self._code_cache[player_id]
+        code = self._load_player(video_id, player_url)
+        if code:
             res = self._parse_sig_js(code)
 
             test_string = ''.join(map(compat_chr, range(len(example_sig))))
@@ -1755,6 +1757,9 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             return res
 
     def _print_sig_code(self, func, example_sig):
+        if not self.get_param('youtube_print_sig_code'):
+            return
+
         def gen_sig_code(idxs):
             def _genslice(start, end, step):
                 starts = '' if start == 0 else str(start)
@@ -1831,13 +1836,58 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 )
                 self._player_cache[player_id] = func
             func = self._player_cache[player_id]
-            if self.get_param('youtube_print_sig_code'):
-                self._print_sig_code(func, s)
+            self._print_sig_code(func, s)
             return func(s)
         except Exception as e:
-            tb = traceback.format_exc()
-            raise ExtractorError(
-                'Signature extraction failed: ' + tb, cause=e)
+            raise ExtractorError('Signature extraction failed: ' + traceback.format_exc(), cause=e)
+
+    def _decrypt_nsig(self, s, video_id, player_url):
+        """Turn the encrypted n field into a working signature"""
+        if player_url is None:
+            raise ExtractorError('Cannot decrypt nsig without player_url')
+        if player_url.startswith('//'):
+            player_url = 'https:' + player_url
+        elif not re.match(r'https?://', player_url):
+            player_url = compat_urlparse.urljoin(
+                'https://www.youtube.com', player_url)
+
+        sig_id = ('nsig_value', s)
+        if sig_id in self._player_cache:
+            return self._player_cache[sig_id]
+
+        try:
+            player_id = ('nsig', player_url)
+            if player_id not in self._player_cache:
+                self._player_cache[player_id] = self._extract_n_function(video_id, player_url)
+            func = self._player_cache[player_id]
+            self._player_cache[sig_id] = func(s)
+            self.write_debug(f'Decrypted nsig {s} => {self._player_cache[sig_id]}')
+            return self._player_cache[sig_id]
+        except Exception as e:
+            raise ExtractorError(traceback.format_exc(), cause=e, video_id=video_id)
+
+    def _extract_n_function_name(self, jscode):
+        return self._search_regex(
+            (r'\.get\("n"\)\)&&\(b=(?P<nfunc>[a-zA-Z0-9$]{3})\([a-zA-Z0-9]\)',),
+            jscode, 'Initial JS player n function name', group='nfunc')
+
+    def _extract_n_function(self, video_id, player_url):
+        player_id = self._extract_player_info(player_url)
+        func_code = self._downloader.cache.load('youtube-nsig', player_id)
+
+        if func_code:
+            jsi = JSInterpreter(func_code)
+        else:
+            jscode = self._load_player(video_id, player_url)
+            funcname = self._extract_n_function_name(jscode)
+            jsi = JSInterpreter(jscode)
+            func_code = jsi.extract_function_code(funcname)
+            self._downloader.cache.store('youtube-nsig', player_id, func_code)
+
+        if self.get_param('youtube_print_sig_code'):
+            self.to_screen(f'Extracted nsig function from {player_id}:\n{func_code[1]}\n')
+
+        return lambda s: jsi.extract_function_from_code(*func_code)([s])
 
     def _extract_signature_timestamp(self, video_id, player_url, ytcfg=None, fatal=False):
         """
@@ -1856,9 +1906,8 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                     raise ExtractorError(error_msg)
                 self.report_warning(error_msg)
                 return
-            if self._load_player(video_id, player_url, fatal=fatal):
-                player_id = self._extract_player_info(player_url)
-                code = self._code_cache[player_id]
+            code = self._load_player(video_id, player_url, fatal=fatal)
+            if code:
                 sts = int_or_none(self._search_regex(
                     r'(?:signatureTimestamp|sts)\s*:\s*(?P<sts>[0-9]{5})', code,
                     'JS player signature timestamp', group='sts', fatal=fatal))
@@ -2387,7 +2436,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
         return prs, player_url
 
     def _extract_formats(self, streaming_data, video_id, player_url, is_live):
-        itags, stream_ids = [], []
+        itags, stream_ids = {}, []
         itag_qualities, res_qualities = {}, {}
         q = qualities([
             # Normally tiny is the smallest video-only formats. But
@@ -2440,8 +2489,20 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 sp = try_get(sc, lambda x: x['sp'][0]) or 'signature'
                 fmt_url += '&' + sp + '=' + signature
 
+            query = parse_qs(fmt_url)
+            throttled = False
+            if query.get('ratebypass') != ['yes'] and query.get('n'):
+                try:
+                    fmt_url = update_url_query(fmt_url, {
+                        'n': self._decrypt_nsig(query['n'][0], video_id, player_url)})
+                except ExtractorError as e:
+                    self.report_warning(
+                        f'nsig extraction failed: You may experience throttling for some formats\n'
+                        f'n = {query["n"][0]} ; player = {player_url}\n{e}', only_once=True)
+                    throttled = True
+
             if itag:
-                itags.append(itag)
+                itags[itag] = 'https'
                 stream_ids.append(stream_id)
 
             tbr = float_or_none(
@@ -2450,11 +2511,13 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                 'asr': int_or_none(fmt.get('audioSampleRate')),
                 'filesize': int_or_none(fmt.get('contentLength')),
                 'format_id': itag,
-                'format_note': ', '.join(filter(None, (
+                'format_note': join_nonempty(
                     '%s%s' % (audio_track.get('displayName') or '',
                               ' (default)' if audio_track.get('audioIsDefault') else ''),
-                    fmt.get('qualityLabel') or quality.replace('audio_quality_', '')))),
-                'fps': int_or_none(fmt.get('fps')),
+                    fmt.get('qualityLabel') or quality.replace('audio_quality_', ''),
+                    throttled and 'THROTTLED', delim=', '),
+                'source_preference': -10 if throttled else -1,
+                'fps': int_or_none(fmt.get('fps')) or None,
                 'height': height,
                 'quality': q(quality),
                 'tbr': tbr,
@@ -2489,46 +2552,36 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             and 'dash' not in skip_manifests and self.get_param('youtube_include_dash_manifest', True))
         get_hls = 'hls' not in skip_manifests and self.get_param('youtube_include_hls_manifest', True)
 
-        def guess_quality(f):
-            for val, qdict in ((f.get('format_id'), itag_qualities), (f.get('height'), res_qualities)):
-                if val in qdict:
-                    return q(qdict[val])
-            return -1
+        def process_manifest_format(f, proto, itag):
+            if itag in itags:
+                if itags[itag] == proto or f'{itag}-{proto}' in itags:
+                    return False
+                itag = f'{itag}-{proto}'
+            if itag:
+                f['format_id'] = itag
+                itags[itag] = proto
+
+            f['quality'] = next((
+                q(qdict[val])
+                for val, qdict in ((f.get('format_id'), itag_qualities), (f.get('height'), res_qualities))
+                if val in qdict), -1)
+            return True
 
         for sd in streaming_data:
             hls_manifest_url = get_hls and sd.get('hlsManifestUrl')
             if hls_manifest_url:
                 for f in self._extract_m3u8_formats(hls_manifest_url, video_id, 'mp4', fatal=False):
-                    itag = self._search_regex(
-                        r'/itag/(\d+)', f['url'], 'itag', default=None)
-                    if itag in itags:
-                        itag += '-hls'
-                        if itag in itags:
-                            continue
-                    if itag:
-                        f['format_id'] = itag
-                        itags.append(itag)
-                    f['quality'] = guess_quality(f)
-                    yield f
+                    if process_manifest_format(f, 'hls', self._search_regex(
+                            r'/itag/(\d+)', f['url'], 'itag', default=None)):
+                        yield f
 
             dash_manifest_url = get_dash and sd.get('dashManifestUrl')
             if dash_manifest_url:
                 for f in self._extract_mpd_formats(dash_manifest_url, video_id, fatal=False):
-                    itag = f['format_id']
-                    if itag in itags:
-                        itag += '-dash'
-                        if itag in itags:
-                            continue
-                    if itag:
-                        f['format_id'] = itag
-                        itags.append(itag)
-                    f['quality'] = guess_quality(f)
-                    filesize = int_or_none(self._search_regex(
-                        r'/clen/(\d+)', f.get('fragment_base_url')
-                        or f['url'], 'file size', default=None))
-                    if filesize:
-                        f['filesize'] = filesize
-                    yield f
+                    if process_manifest_format(f, 'dash', f['format_id']):
+                        f['filesize'] = int_or_none(self._search_regex(
+                            r'/clen/(\d+)', f.get('fragment_base_url') or f['url'], 'file size', default=None))
+                        yield f
 
     def _real_extract(self, url):
         url, smuggled_data = unsmuggle_url(url, {})
@@ -2574,49 +2627,48 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             or search_meta(['og:title', 'twitter:title', 'title']))
         video_description = get_first(video_details, 'shortDescription')
 
-        if not smuggled_data.get('force_singlefeed', False):
-            if not self.get_param('noplaylist'):
-                multifeed_metadata_list = get_first(
-                    player_responses,
-                    ('multicamera', 'playerLegacyMulticameraRenderer', 'metadataList'),
-                    expected_type=str)
-                if multifeed_metadata_list:
-                    entries = []
-                    feed_ids = []
-                    for feed in multifeed_metadata_list.split(','):
-                        # Unquote should take place before split on comma (,) since textual
-                        # fields may contain comma as well (see
-                        # https://github.com/ytdl-org/youtube-dl/issues/8536)
-                        feed_data = compat_parse_qs(
-                            compat_urllib_parse_unquote_plus(feed))
-
-                        def feed_entry(name):
-                            return try_get(
-                                feed_data, lambda x: x[name][0], compat_str)
-
-                        feed_id = feed_entry('id')
-                        if not feed_id:
-                            continue
-                        feed_title = feed_entry('title')
-                        title = video_title
-                        if feed_title:
-                            title += ' (%s)' % feed_title
-                        entries.append({
-                            '_type': 'url_transparent',
-                            'ie_key': 'Youtube',
-                            'url': smuggle_url(
-                                '%swatch?v=%s' % (base_url, feed_data['id'][0]),
-                                {'force_singlefeed': True}),
-                            'title': title,
-                        })
-                        feed_ids.append(feed_id)
-                    self.to_screen(
-                        'Downloading multifeed video (%s) - add --no-playlist to just download video %s'
-                        % (', '.join(feed_ids), video_id))
-                    return self.playlist_result(
-                        entries, video_id, video_title, video_description)
-            else:
+        multifeed_metadata_list = get_first(
+            player_responses,
+            ('multicamera', 'playerLegacyMulticameraRenderer', 'metadataList'),
+            expected_type=str)
+        if multifeed_metadata_list and not smuggled_data.get('force_singlefeed'):
+            if self.get_param('noplaylist'):
                 self.to_screen('Downloading just video %s because of --no-playlist' % video_id)
+            else:
+                entries = []
+                feed_ids = []
+                for feed in multifeed_metadata_list.split(','):
+                    # Unquote should take place before split on comma (,) since textual
+                    # fields may contain comma as well (see
+                    # https://github.com/ytdl-org/youtube-dl/issues/8536)
+                    feed_data = compat_parse_qs(
+                        compat_urllib_parse_unquote_plus(feed))
+
+                    def feed_entry(name):
+                        return try_get(
+                            feed_data, lambda x: x[name][0], compat_str)
+
+                    feed_id = feed_entry('id')
+                    if not feed_id:
+                        continue
+                    feed_title = feed_entry('title')
+                    title = video_title
+                    if feed_title:
+                        title += ' (%s)' % feed_title
+                    entries.append({
+                        '_type': 'url_transparent',
+                        'ie_key': 'Youtube',
+                        'url': smuggle_url(
+                            '%swatch?v=%s' % (base_url, feed_data['id'][0]),
+                            {'force_singlefeed': True}),
+                        'title': title,
+                    })
+                    feed_ids.append(feed_id)
+                self.to_screen(
+                    'Downloading multifeed video (%s) - add --no-playlist to just download video %s'
+                    % (', '.join(feed_ids), video_id))
+                return self.playlist_result(
+                    entries, video_id, video_title, video_description)
 
         live_broadcast_details = traverse_obj(microformats, (..., 'liveBroadcastDetails'))
         is_live = get_first(video_details, 'isLive')
@@ -2645,15 +2697,9 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             if reason:
                 self.raise_no_formats(reason, expected=True)
 
-        for f in formats:
-            if '&c=WEB&' in f['url'] and '&ratebypass=yes&' not in f['url']:  # throttled
-                f['source_preference'] = -10
-                # TODO: this method is not reliable
-                f['format_note'] = format_field(f, 'format_note', '%s ') + '(maybe throttled)'
-
         # Source is given priority since formats that throttle are given lower source_preference
         # When throttling issue is fully fixed, remove this
-        self._sort_formats(formats, ('quality', 'res', 'fps', 'hdr:12', 'source', 'codec:vp9.2', 'lang'))
+        self._sort_formats(formats, ('quality', 'res', 'fps', 'hdr:12', 'source', 'codec:vp9.2', 'lang', 'proto'))
 
         keywords = get_first(video_details, 'keywords', expected_type=list) or []
         if not keywords and webpage:
@@ -2696,6 +2742,8 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             thumbnails.append({
                 'url': thumbnail_url,
             })
+        original_thumbnails = thumbnails.copy()
+
         # The best resolution thumbnails sometimes does not appear in the webpage
         # See: https://github.com/ytdl-org/youtube-dl/issues/29049, https://github.com/yt-dlp/yt-dlp/issues/340
         # List of possible thumbnails - Ref: <https://stackoverflow.com/a/20542029>
@@ -2706,7 +2754,6 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             'default', '1', '2', '3'
         ]
         n_thumbnail_names = len(thumbnail_names)
-
         thumbnails.extend({
             'url': 'https://i.ytimg.com/vi{webp}/{video_id}/{name}{live}.{ext}'.format(
                 video_id=video_id, name=name, ext=ext,
@@ -2716,6 +2763,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             i = next((i for i, t in enumerate(thumbnail_names) if f'/{video_id}/{t}' in thumb['url']), n_thumbnail_names)
             thumb['preference'] = (0 if '.webp' in thumb['url'] else -1) - (2 * i)
         self._remove_duplicate_formats(thumbnails)
+        self._downloader._sort_thumbnails(original_thumbnails)
 
         category = get_first(microformats, 'category') or search_meta('genre')
         channel_id = str_or_none(
@@ -2745,6 +2793,9 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
             'title': self._live_title(video_title) if is_live else video_title,
             'formats': formats,
             'thumbnails': thumbnails,
+            # The best thumbnail that we are sure exists. Prevents unnecessary
+            # URL checking if user don't care about getting the best possible thumbnail
+            'thumbnail': traverse_obj(original_thumbnails, (-1, 'url')),
             'description': video_description,
             'upload_date': unified_strdate(
                 get_first(microformats, 'uploadDate')
@@ -3010,13 +3061,13 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
 
 
 class YoutubeTabIE(YoutubeBaseInfoExtractor):
-    IE_DESC = 'YouTube.com tab'
+    IE_DESC = 'YouTube Tabs'
     _VALID_URL = r'''(?x)
                     https?://
                         (?:\w+\.)?
                         (?:
                             youtube(?:kids)?\.com|
-                            invidio\.us
+                            %(invidious)s
                         )/
                         (?:
                             (?P<channel_type>channel|c|user|browse)/|
@@ -3024,10 +3075,13 @@ class YoutubeTabIE(YoutubeBaseInfoExtractor):
                                 feed/|hashtag/|
                                 (?:playlist|watch)\?.*?\blist=
                             )|
-                            (?!(?:%s)\b)  # Direct URLs
+                            (?!(?:%(reserved_names)s)\b)  # Direct URLs
                         )
                         (?P<id>[^/?\#&]+)
-                    ''' % YoutubeBaseInfoExtractor._RESERVED_NAMES
+                    ''' % {
+        'reserved_names': YoutubeBaseInfoExtractor._RESERVED_NAMES,
+        'invidious': '|'.join(YoutubeBaseInfoExtractor._INVIDIOUS_SITES),
+    }
     IE_NAME = 'youtube:tab'
 
     _TESTS = [{
@@ -4238,19 +4292,22 @@ class YoutubeTabIE(YoutubeBaseInfoExtractor):
 
 
 class YoutubePlaylistIE(InfoExtractor):
-    IE_DESC = 'YouTube.com playlists'
+    IE_DESC = 'YouTube playlists'
     _VALID_URL = r'''(?x)(?:
                         (?:https?://)?
                         (?:\w+\.)?
                         (?:
                             (?:
                                 youtube(?:kids)?\.com|
-                                invidio\.us
+                                %(invidious)s
                             )
                             /.*?\?.*?\blist=
                         )?
                         (?P<id>%(playlist_id)s)
-                     )''' % {'playlist_id': YoutubeBaseInfoExtractor._PLAYLIST_ID_RE}
+                     )''' % {
+        'playlist_id': YoutubeBaseInfoExtractor._PLAYLIST_ID_RE,
+        'invidious': '|'.join(YoutubeBaseInfoExtractor._INVIDIOUS_SITES),
+    }
     IE_NAME = 'youtube:playlist'
     _TESTS = [{
         'note': 'issue #673',
@@ -4304,9 +4361,7 @@ class YoutubePlaylistIE(InfoExtractor):
     def suitable(cls, url):
         if YoutubeTabIE.suitable(url):
             return False
-        # Hack for lazy extractors until more generic solution is implemented
-        # (see #28780)
-        from .youtube import parse_qs
+        from ..utils import parse_qs
         qs = parse_qs(url)
         if qs.get('v', [None])[0]:
             return False
@@ -4364,7 +4419,7 @@ class YoutubeYtBeIE(InfoExtractor):
 
 
 class YoutubeYtUserIE(InfoExtractor):
-    IE_DESC = 'YouTube.com user videos, URL or "ytuser" keyword'
+    IE_DESC = 'YouTube user videos; "ytuser:" prefix'
     _VALID_URL = r'ytuser:(?P<id>.+)'
     _TESTS = [{
         'url': 'ytuser:phihag',
@@ -4374,13 +4429,13 @@ class YoutubeYtUserIE(InfoExtractor):
     def _real_extract(self, url):
         user_id = self._match_id(url)
         return self.url_result(
-            'https://www.youtube.com/user/%s' % user_id,
+            'https://www.youtube.com/user/%s/videos' % user_id,
             ie=YoutubeTabIE.ie_key(), video_id=user_id)
 
 
 class YoutubeFavouritesIE(YoutubeBaseInfoExtractor):
     IE_NAME = 'youtube:favorites'
-    IE_DESC = 'YouTube.com liked videos, ":ytfav" for short (requires authentication)'
+    IE_DESC = 'YouTube liked videos; ":ytfav" keyword (requires cookies)'
     _VALID_URL = r':ytfav(?:ou?rite)?s?'
     _LOGIN_REQUIRED = True
     _TESTS = [{
@@ -4398,10 +4453,7 @@ class YoutubeFavouritesIE(YoutubeBaseInfoExtractor):
 
 
 class YoutubeSearchIE(SearchInfoExtractor, YoutubeTabIE):
-    IE_DESC = 'YouTube.com searches, "ytsearch" keyword'
-    # there doesn't appear to be a real limit, for example if you search for
-    # 'python' you get more than 8.000.000 results
-    _MAX_RESULTS = float('inf')
+    IE_DESC = 'YouTube searches'
     IE_NAME = 'youtube:search'
     _SEARCH_KEY = 'ytsearch'
     _SEARCH_PARAMS = None
@@ -4461,13 +4513,14 @@ class YoutubeSearchIE(SearchInfoExtractor, YoutubeTabIE):
 class YoutubeSearchDateIE(YoutubeSearchIE):
     IE_NAME = YoutubeSearchIE.IE_NAME + ':date'
     _SEARCH_KEY = 'ytsearchdate'
-    IE_DESC = 'YouTube.com searches, newest videos first, "ytsearchdate" keyword'
+    IE_DESC = 'YouTube searches, newest videos first'
     _SEARCH_PARAMS = 'CAI%3D'
 
 
 class YoutubeSearchURLIE(YoutubeSearchIE):
-    IE_DESC = 'YouTube.com search URLs'
+    IE_DESC = 'YouTube search URLs with sorting and filter support'
     IE_NAME = YoutubeSearchIE.IE_NAME + '_url'
+    _SEARCH_KEY = None
     _VALID_URL = r'https?://(?:www\.)?youtube\.com/results\?(.*?&)?(?:search_query|q)=(?:[^&]+)(?:[&]|$)'
     # _MAX_RESULTS = 100
     _TESTS = [{
@@ -4513,7 +4566,7 @@ class YoutubeFeedsInfoExtractor(YoutubeTabIE):
 
 class YoutubeWatchLaterIE(InfoExtractor):
     IE_NAME = 'youtube:watchlater'
-    IE_DESC = 'Youtube watch later list, ":ytwatchlater" for short (requires authentication)'
+    IE_DESC = 'Youtube watch later list; ":ytwatchlater" keyword (requires cookies)'
     _VALID_URL = r':ytwatchlater'
     _TESTS = [{
         'url': ':ytwatchlater',
@@ -4526,7 +4579,7 @@ class YoutubeWatchLaterIE(InfoExtractor):
 
 
 class YoutubeRecommendedIE(YoutubeFeedsInfoExtractor):
-    IE_DESC = 'YouTube.com recommended videos, ":ytrec" for short (requires authentication)'
+    IE_DESC = 'YouTube recommended videos; ":ytrec" keyword'
     _VALID_URL = r'https?://(?:www\.)?youtube\.com/?(?:[?#]|$)|:ytrec(?:ommended)?'
     _FEED_NAME = 'recommended'
     _LOGIN_REQUIRED = False
@@ -4543,7 +4596,7 @@ class YoutubeRecommendedIE(YoutubeFeedsInfoExtractor):
 
 
 class YoutubeSubscriptionsIE(YoutubeFeedsInfoExtractor):
-    IE_DESC = 'YouTube.com subscriptions feed, ":ytsubs" for short (requires authentication)'
+    IE_DESC = 'YouTube subscriptions feed; ":ytsubs" keyword (requires cookies)'
     _VALID_URL = r':ytsub(?:scription)?s?'
     _FEED_NAME = 'subscriptions'
     _TESTS = [{
@@ -4556,7 +4609,7 @@ class YoutubeSubscriptionsIE(YoutubeFeedsInfoExtractor):
 
 
 class YoutubeHistoryIE(YoutubeFeedsInfoExtractor):
-    IE_DESC = 'Youtube watch history, ":ythis" for short (requires authentication)'
+    IE_DESC = 'Youtube watch history; ":ythis" keyword (requires cookies)'
     _VALID_URL = r':ythis(?:tory)?'
     _FEED_NAME = 'history'
     _TESTS = [{

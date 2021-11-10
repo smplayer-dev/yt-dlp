@@ -50,6 +50,7 @@ from .animelab import (
     AnimeLabIE,
     AnimeLabShowsIE,
 )
+from .amazon import AmazonStoreIE
 from .americastestkitchen import (
     AmericasTestKitchenIE,
     AmericasTestKitchenSeasonIE,
@@ -235,10 +236,7 @@ from .ccc import (
 from .ccma import CCMAIE
 from .cctv import CCTVIE
 from .cda import CDAIE
-from .ceskatelevize import (
-    CeskaTelevizeIE,
-    CeskaTelevizePoradyIE,
-)
+from .ceskatelevize import CeskaTelevizeIE
 from .cgtn import CGTNIE
 from .channel9 import Channel9IE
 from .charlierose import CharlieRoseIE
@@ -495,7 +493,10 @@ from .funimation import (
 )
 from .funk import FunkIE
 from .fusion import FusionIE
-from .gab import GabTVIE
+from .gab import (
+    GabTVIE,
+    GabIE,
+)
 from .gaia import GaiaIE
 from .gameinformer import GameInformerIE
 from .gamespot import GameSpotIE
@@ -591,12 +592,16 @@ from .indavideo import IndavideoEmbedIE
 from .infoq import InfoQIE
 from .instagram import (
     InstagramIE,
+    InstagramIOSIE,
     InstagramUserIE,
     InstagramTagIE,
 )
 from .internazionale import InternazionaleIE
 from .internetvideoarchive import InternetVideoArchiveIE
-from .iprima import IPrimaIE
+from .iprima import (
+    IPrimaIE,
+    IPrimaCNNIE
+)
 from .iqiyi import IqiyiIE
 from .ir90tv import Ir90TvIE
 from .itv import (
@@ -744,7 +749,10 @@ from .mdr import MDRIE
 from .medaltv import MedalTVIE
 from .mediaite import MediaiteIE
 from .mediaklikk import MediaKlikkIE
-from .mediaset import MediasetIE
+from .mediaset import (
+    MediasetIE,
+    MediasetShowIE,
+)
 from .mediasite import (
     MediasiteIE,
     MediasiteCatalogIE,
@@ -760,6 +768,7 @@ from .metacritic import MetacriticIE
 from .mgoon import MgoonIE
 from .mgtv import MGTVIE
 from .miaopai import MiaoPaiIE
+from .microsoftstream import MicrosoftStreamIE
 from .microsoftvirtualacademy import (
     MicrosoftVirtualAcademyIE,
     MicrosoftVirtualAcademyCourseIE,
@@ -792,6 +801,7 @@ from .mlb import (
     MLBIE,
     MLBVideoIE,
 )
+from .mlssoccer import MLSSoccerIE
 from .mnet import MnetIE
 from .moevideo import MoeVideoIE
 from .mofosex import (
@@ -834,7 +844,10 @@ from .myvi import (
 )
 from .myvideoge import MyVideoGeIE
 from .myvidster import MyVidsterIE
-from .n1 import N1InfoIIE, N1InfoAssetIE
+from .n1 import (
+    N1InfoAssetIE,
+    N1InfoIIE,
+)
 from .nationalgeographic import (
     NationalGeographicVideoIE,
     NationalGeographicTVIE,
@@ -1070,6 +1083,7 @@ from .pinterest import (
     PinterestCollectionIE,
 )
 from .pladform import PladformIE
+from .planetmarathi import PlanetMarathiIE
 from .platzi import (
     PlatziIE,
     PlatziCourseIE,
@@ -1091,9 +1105,14 @@ from .pokemon import (
     PokemonIE,
     PokemonWatchIE,
 )
+from .polsatgo import PolsatGoIE
 from .polskieradio import (
     PolskieRadioIE,
     PolskieRadioCategoryIE,
+    PolskieRadioPlayerIE,
+    PolskieRadioPodcastIE,
+    PolskieRadioPodcastListIE,
+    PolskieRadioRadioKierowcowIE,
 )
 from .popcorntimes import PopcorntimesIE
 from .popcorntv import PopcornTVIE
@@ -1140,6 +1159,10 @@ from .radiode import RadioDeIE
 from .radiojavan import RadioJavanIE
 from .radiobremen import RadioBremenIE
 from .radiofrance import RadioFranceIE
+from .radiokapital import (
+    RadioKapitalIE,
+    RadioKapitalShowIE,
+)
 from .radlive import (
     RadLiveIE,
     RadLiveChannelIE,
@@ -1150,6 +1173,8 @@ from .rai import (
     RaiPlayLiveIE,
     RaiPlayPlaylistIE,
     RaiIE,
+    RaiPlayRadioIE,
+    RaiPlayRadioPlaylistIE,
 )
 from .raywenderlich import (
     RayWenderlichIE,
@@ -1190,7 +1215,7 @@ from .rice import RICEIE
 from .rmcdecouverte import RMCDecouverteIE
 from .ro220 import Ro220IE
 from .rockstargames import RockstarGamesIE
-from .roosterteeth import RoosterTeethIE
+from .roosterteeth import RoosterTeethIE, RoosterTeethSeriesIE
 from .rottentomatoes import RottenTomatoesIE
 from .roxwel import RoxwelIE
 from .rozhlas import RozhlasIE
@@ -1288,6 +1313,7 @@ from .skynewsarabia import (
 from .skynewsau import SkyNewsAUIE
 from .sky import (
     SkyNewsIE,
+    SkyNewsStoryIE,
     SkySportsIE,
     SkySportsNewsIE,
 )
@@ -1387,10 +1413,7 @@ from .svt import (
 from .swrmediathek import SWRMediathekIE
 from .syfy import SyfyIE
 from .sztvhu import SztvHuIE
-from .tagesschau import (
-    TagesschauPlayerIE,
-    TagesschauIE,
-)
+from .tagesschau import TagesschauIE
 from .tass import TassIE
 from .tbs import TBSIE
 from .tdslifeway import TDSLifewayIE
@@ -1444,6 +1467,10 @@ from .theweatherchannel import TheWeatherChannelIE
 from .thisamericanlife import ThisAmericanLifeIE
 from .thisav import ThisAVIE
 from .thisoldhouse import ThisOldHouseIE
+from .threespeak import (
+    ThreeSpeakIE,
+    ThreeSpeakUserIE,
+)
 from .threeqsdn import ThreeQSDNIE
 from .tiktok import (
     TikTokIE,
@@ -1544,6 +1571,7 @@ from .tvnow import (
 from .tvp import (
     TVPEmbedIE,
     TVPIE,
+    TVPStreamIE,
     TVPWebsiteIE,
 )
 from .tvplay import (
@@ -1761,6 +1789,10 @@ from .wistia import (
     WistiaPlaylistIE,
 )
 from .worldstarhiphop import WorldStarHipHopIE
+from .wppilot import (
+    WPPilotIE,
+    WPPilotChannelsIE,
+)
 from .wsj import (
     WSJIE,
     WSJArticleIE,

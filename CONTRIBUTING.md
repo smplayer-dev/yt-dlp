@@ -105,7 +105,7 @@ Only post features that you (or an incapacitated friend you can personally talk 
 
 ###  Is your question about yt-dlp?
 
-Some bug reports are completely unrelated to yt-dlp and relate to a different, or even the reporter's own, application. Please make sure that you are actually using yt-dlp. If you are using a UI for yt-dlp, report the bug to the maintainer of the actual application providing the UI. On the other hand, if your UI for yt-dlp fails in some way you believe is related to yt-dlp, by all means, go ahead and report the bug.
+Some bug reports are completely unrelated to yt-dlp and relate to a different, or even the reporter's own, application. Please make sure that you are actually using yt-dlp. If you are using a UI for yt-dlp, report the bug to the maintainer of the actual application providing the UI. In general, if you are unable to provide the verbose log, you should not be opening the issue here.
 
 If the issue is with `youtube-dl` (the upstream fork of yt-dlp) and not with yt-dlp, the issue should be raised in the youtube-dl project.
 
@@ -117,7 +117,7 @@ By sharing an account with anyone, you agree to bear all risks associated with i
 
 While these steps won't necessarily ensure that no misuse of the account takes place, these are still some good practices to follow.
 
-- Look for people with `Member` or `Contributor` tag on their messages.
+- Look for people with `Member` (maintainers of the project) or `Contributor` (people who have previously contributed code) tag on their messages.
 - Change the password before sharing the account to something random (use [this](https://passwordsgenerator.net/) if you don't have a random password generator).
 - Change the password after receiving the account back.
 
@@ -148,7 +148,7 @@ If you want to create a build of yt-dlp yourself, you can follow the instruction
 
 Before you start writing code for implementing a new feature, open an issue explaining your feature request and atleast one use case. This allows the maintainers to decide whether such a feature is desired for the project in the first place, and will provide an avenue to discuss some implementation details. If you open a pull request for a new feature without discussing with us first, do not be surprised when we ask for large changes to the code, or even reject it outright.
 
-The same applies for overarching changes to the architecture, documentation or code style
+The same applies for changes to the documentation, code style, or overarching changes to the architecture
 
 
 ## Adding support for a new site

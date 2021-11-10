@@ -29,6 +29,8 @@ from .utils import (
     error_to_compat_str,
     ExistingVideoReached,
     expand_path,
+    float_or_none,
+    int_or_none,
     match_filter_func,
     MaxDownloadsReached,
     parse_duration,
@@ -122,10 +124,10 @@ def _real_main(argv=None):
             desc = getattr(ie, 'IE_DESC', ie.IE_NAME)
             if desc is False:
                 continue
-            if hasattr(ie, 'SEARCH_KEY'):
+            if getattr(ie, 'SEARCH_KEY', None) is not None:
                 _SEARCHES = ('cute kittens', 'slithering pythons', 'falling cat', 'angry poodle', 'purple fish', 'running tortoise', 'sleeping bunny', 'burping cow')
                 _COUNTS = ('', '5', '10', 'all')
-                desc += ' (Example: "%s%s:%s" )' % (ie.SEARCH_KEY, random.choice(_COUNTS), random.choice(_SEARCHES))
+                desc += f'; "{ie.SEARCH_KEY}:" prefix (Example: "{ie.SEARCH_KEY}{random.choice(_COUNTS)}:{random.choice(_SEARCHES)}")'
             write_string(desc + '\n', out=sys.stdout)
         sys.exit(0)
     if opts.ap_list_mso:
@@ -225,11 +227,13 @@ def _real_main(argv=None):
     if opts.playlistend not in (-1, None) and opts.playlistend < opts.playliststart:
         raise ValueError('Playlist end must be greater than playlist start')
     if opts.extractaudio:
+        opts.audioformat = opts.audioformat.lower()
         if opts.audioformat not in ['best'] + list(FFmpegExtractAudioPP.SUPPORTED_EXTS):
             parser.error('invalid audio format specified')
     if opts.audioquality:
         opts.audioquality = opts.audioquality.strip('k').strip('K')
-        if not opts.audioquality.isdigit():
+        audioquality = int_or_none(float_or_none(opts.audioquality))  # int_or_none prevents inf, nan
+        if audioquality is None or audioquality < 0:
             parser.error('invalid audio quality specified')
     if opts.recodevideo is not None:
         opts.recodevideo = opts.recodevideo.replace(' ', '')
@@ -258,6 +262,9 @@ def _real_main(argv=None):
         date = DateRange(opts.dateafter, opts.datebefore)
 
     compat_opts = opts.compat_opts
+
+    def report_conflict(arg1, arg2):
+        warnings.append(f'{arg2} is ignored since {arg1} was given')
 
     def _unused_compat_opt(name):
         if name not in compat_opts:
@@ -290,10 +297,14 @@ def _real_main(argv=None):
     if _video_multistreams_set is False and _audio_multistreams_set is False:
         _unused_compat_opt('multistreams')
     outtmpl_default = opts.outtmpl.get('default')
+    if opts.useid:
+        if outtmpl_default is None:
+            outtmpl_default = opts.outtmpl['default'] = '%(id)s.%(ext)s'
+        else:
+            report_conflict('--output', '--id')
     if 'filename' in compat_opts:
         if outtmpl_default is None:
-            outtmpl_default = '%(title)s-%(id)s.%(ext)s'
-            opts.outtmpl.update({'default': outtmpl_default})
+            outtmpl_default = opts.outtmpl['default'] = '%(title)s-%(id)s.%(ext)s'
         else:
             _unused_compat_opt('filename')
 
@@ -365,9 +376,6 @@ def _real_main(argv=None):
     if (opts.addmetadata or opts.sponsorblock_mark) and opts.addchapters is None:
         opts.addchapters = True
     opts.remove_chapters = opts.remove_chapters or []
-
-    def report_conflict(arg1, arg2):
-        warnings.append('%s is ignored since %s was given' % (arg2, arg1))
 
     if (opts.remove_chapters or sponsorblock_query) and opts.sponskrub is not False:
         if opts.sponskrub:
@@ -741,7 +749,7 @@ def _real_main(argv=None):
         'geo_bypass': opts.geo_bypass,
         'geo_bypass_country': opts.geo_bypass_country,
         'geo_bypass_ip_block': opts.geo_bypass_ip_block,
-        'warnings': warnings,
+        '_warnings': warnings,
         'compat_opts': compat_opts,
     }
 
@@ -787,15 +795,15 @@ def main(argv=None):
         _real_main(argv)
     except DownloadError:
         sys.exit(1)
-    except SameFileError:
-        sys.exit('ERROR: fixed output name but more than one file to download')
+    except SameFileError as e:
+        sys.exit(f'ERROR: {e}')
     except KeyboardInterrupt:
         sys.exit('\nERROR: Interrupted by user')
-    except BrokenPipeError:
+    except BrokenPipeError as e:
         # https://docs.python.org/3/library/signal.html#note-on-sigpipe
         devnull = os.open(os.devnull, os.O_WRONLY)
         os.dup2(devnull, sys.stdout.fileno())
-        sys.exit(r'\nERROR: {err}')
+        sys.exit(f'\nERROR: {e}')
 
 
 __all__ = ['main', 'YoutubeDL', 'gen_extractors', 'list_extractors']

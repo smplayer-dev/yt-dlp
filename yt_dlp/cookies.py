@@ -117,7 +117,7 @@ def _extract_firefox_cookies(profile, logger):
         raise FileNotFoundError('could not find firefox cookies database in {}'.format(search_root))
     logger.debug('Extracting cookies from: "{}"'.format(cookie_database_path))
 
-    with tempfile.TemporaryDirectory(prefix='youtube_dl') as tmpdir:
+    with tempfile.TemporaryDirectory(prefix='yt_dlp') as tmpdir:
         cursor = None
         try:
             cursor = _open_database_copy(cookie_database_path, tmpdir)
@@ -236,7 +236,7 @@ def _extract_chrome_cookies(browser_name, profile, logger):
 
     decryptor = get_cookie_decryptor(config['browser_dir'], config['keyring_name'], logger)
 
-    with tempfile.TemporaryDirectory(prefix='youtube_dl') as tmpdir:
+    with tempfile.TemporaryDirectory(prefix='yt_dlp') as tmpdir:
         cursor = None
         try:
             cursor = _open_database_copy(cookie_database_path, tmpdir)
@@ -620,7 +620,7 @@ def _get_windows_v10_key(browser_root, logger):
     if path is None:
         logger.error('could not find local state file')
         return None
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf8') as f:
         data = json.load(f)
     try:
         base64_key = data['os_crypt']['encrypted_key']
