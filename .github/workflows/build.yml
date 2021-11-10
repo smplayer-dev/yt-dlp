@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - release
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build_unix:
