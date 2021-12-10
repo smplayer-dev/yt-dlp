@@ -166,6 +166,7 @@ from .bleacherreport import (
     BleacherReportIE,
     BleacherReportCMSIE,
 )
+from .blogger import BloggerIE
 from .bloomberg import BloombergIE
 from .bokecc import BokeCCIE
 from .bongacams import BongaCamsIE
@@ -178,6 +179,7 @@ from .br import (
 )
 from .bravotv import BravoTVIE
 from .breakcom import BreakIE
+from .breitbart import BreitBartIE
 from .brightcove import (
     BrightcoveLegacyIE,
     BrightcoveNewIE,
@@ -186,6 +188,7 @@ from .businessinsider import BusinessInsiderIE
 from .buzzfeed import BuzzFeedIE
 from .byutv import BYUtvIE
 from .c56 import C56IE
+from .cableav import CableAVIE
 from .cam4 import CAM4IE
 from .camdemy import (
     CamdemyIE,
@@ -193,6 +196,7 @@ from .camdemy import (
 )
 from .cammodels import CamModelsIE
 from .camwithher import CamWithHerIE
+from .canalalpha import CanalAlphaIE
 from .canalplus import CanalplusIE
 from .canalc2 import Canalc2IE
 from .canvas import (
@@ -291,6 +295,7 @@ from .commonprotocols import (
 from .condenast import CondeNastIE
 from .contv import CONtvIE
 from .corus import CorusIE
+from .cozytv import CozyTVIE
 from .cracked import CrackedIE
 from .crackle import CrackleIE
 from .crooksandliars import CrooksAndLiarsIE
@@ -307,7 +312,8 @@ from .ctvnews import CTVNewsIE
 from .cultureunplugged import CultureUnpluggedIE
 from .curiositystream import (
     CuriosityStreamIE,
-    CuriosityStreamCollectionIE,
+    CuriosityStreamCollectionsIE,
+    CuriosityStreamSeriesIE,
 )
 from .cwtv import CWTVIE
 from .dailymail import DailyMailIE
@@ -336,10 +342,6 @@ from .democracynow import DemocracynowIE
 from .dfb import DFBIE
 from .dhm import DHMIE
 from .digg import DiggIE
-from .discoveryplusindia import (
-    DiscoveryPlusIndiaIE,
-    DiscoveryPlusIndiaShowIE,
-)
 from .dotsub import DotsubIE
 from .douyutv import (
     DouyuShowIE,
@@ -351,7 +353,11 @@ from .dplay import (
     HGTVDeIE,
     ScienceChannelIE,
     DIYNetworkIE,
-    AnimalPlanetIE
+    AnimalPlanetIE,
+    DiscoveryPlusIndiaIE,
+    DiscoveryNetworksDeIE,
+    DiscoveryPlusItalyShowIE,
+    DiscoveryPlusIndiaShowIE,
 )
 from .dreisat import DreiSatIE
 from .drbonanza import DRBonanzaIE
@@ -373,7 +379,6 @@ from .discoverygo import (
     DiscoveryGoIE,
     DiscoveryGoPlaylistIE,
 )
-from .discoverynetworks import DiscoveryNetworksDeIE
 from .discoveryvr import DiscoveryVRIE
 from .disney import DisneyIE
 from .dispeak import DigitallySpeakingIE
@@ -417,6 +422,7 @@ from .espn import (
     ESPNIE,
     ESPNArticleIE,
     FiveThirtyEightIE,
+    ESPNCricInfoIE,
 )
 from .esri import EsriVideoIE
 from .europa import EuropaIE
@@ -517,6 +523,7 @@ from .globo import (
 )
 from .go import GoIE
 from .godtube import GodTubeIE
+from .gofile import GofileIE
 from .golem import GolemIE
 from .googledrive import GoogleDriveIE
 from .googlepodcasts import (
@@ -701,6 +708,7 @@ from .line import (
     LineLiveChannelIE,
 )
 from .linkedin import (
+    LinkedInIE,
     LinkedInLearningIE,
     LinkedInLearningCourseIE,
 )
@@ -792,6 +800,7 @@ from .mirrativ import (
 )
 from .mit import TechTVMITIE, OCWMITIE
 from .mitele import MiTeleIE
+from .mixch import MixchIE
 from .mixcloud import (
     MixcloudIE,
     MixcloudUserIE,
@@ -881,7 +890,10 @@ from .ndr import (
     NJoyEmbedIE,
 )
 from .ndtv import NDTVIE
-from .nebula import NebulaIE
+from .nebula import (
+    NebulaIE,
+    NebulaCollectionIE,
+)
 from .nerdcubed import NerdCubedFeedIE
 from .netzkino import NetzkinoIE
 from .neteasemusic import (
@@ -935,7 +947,10 @@ from .niconico import (
     NicovideoSearchIE,
     NicovideoSearchURLIE,
 )
-from .ninecninemedia import NineCNineMediaIE
+from .ninecninemedia import (
+    NineCNineMediaIE,
+    CPTwentyFourIE,
+)
 from .ninegag import NineGagIE
 from .ninenow import NineNowIE
 from .nintendo import NintendoIE
@@ -999,6 +1014,7 @@ from .oktoberfesttv import OktoberfestTVIE
 from .olympics import OlympicsReplayIE
 from .on24 import On24IE
 from .ondemandkorea import OnDemandKoreaIE
+from .onefootball import OneFootballIE
 from .onet import (
     OnetIE,
     OnetChannelIE,
@@ -1059,6 +1075,7 @@ from .peertube import (
     PeerTubeIE,
     PeerTubePlaylistIE,
 )
+from .peertv import PeerTVIE
 from .peloton import (
     PelotonIE,
     PelotonLiveIE
@@ -1159,6 +1176,7 @@ from .radiode import RadioDeIE
 from .radiojavan import RadioJavanIE
 from .radiobremen import RadioBremenIE
 from .radiofrance import RadioFranceIE
+from .radiozet import RadioZetPodcastIE
 from .radiokapital import (
     RadioKapitalIE,
     RadioKapitalShowIE,
@@ -1198,9 +1216,11 @@ from .redbulltv import (
     RedBullTVRrnContentIE,
     RedBullIE,
 )
-from .reddit import (
-    RedditIE,
-    RedditRIE,
+from .reddit import RedditIE
+from .redgifs import (
+    RedGifsIE,
+    RedGifsSearchIE,
+    RedGifsUserIE,
 )
 from .redtube import RedTubeIE
 from .regiotv import RegioTVIE
@@ -1228,6 +1248,7 @@ from .rtl2 import (
     RTL2YouSeriesIE,
 )
 from .rtp import RTPIE
+from .rtrfm import RTRFMIE
 from .rts import RTSIE
 from .rtve import RTVEALaCartaIE, RTVELiveIE, RTVEInfantilIE, RTVELiveIE, RTVETelevisionIE
 from .rtvnh import RTVNHIE
@@ -1269,7 +1290,7 @@ from .scte import (
     SCTECourseIE,
 )
 from .seeker import SeekerIE
-from .senateisvp import SenateISVPIE
+from .senategov import SenateISVPIE, SenateGovIE
 from .sendtonews import SendtoNewsIE
 from .servus import ServusIE
 from .sevenplus import SevenPlusIE
@@ -1295,6 +1316,7 @@ from .simplecast import (
 )
 from .sina import SinaIE
 from .sixplay import SixPlayIE
+from .skeb import SkebIE
 from .skyit import (
     SkyItPlayerIE,
     SkyItVideoIE,
@@ -1396,8 +1418,10 @@ from .streamable import StreamableIE
 from .streamanity import StreamanityIE
 from .streamcloud import StreamcloudIE
 from .streamcz import StreamCZIE
+from .streamff import StreamFFIE
 from .streetvoice import StreetVoiceIE
 from .stretchinternet import StretchInternetIE
+from .stripchat import StripchatIE
 from .stv import STVPlayerIE
 from .sunporno import SunPornoIE
 from .sverigesradio import (
@@ -1505,6 +1529,7 @@ from .trovo import (
     TrovoChannelVodIE,
     TrovoChannelClipIE,
 )
+from .trueid import TrueIDIE
 from .trunews import TruNewsIE
 from .trutv import TruTVIE
 from .tube8 import Tube8IE
@@ -1782,6 +1807,7 @@ from .weibo import (
     WeiboMobileIE
 )
 from .weiqitv import WeiqiTVIE
+from .willow import WillowIE
 from .wimtv import WimTVIE
 from .whowatch import WhoWatchIE
 from .wistia import (

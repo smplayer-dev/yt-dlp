@@ -38,6 +38,7 @@ import time
 import traceback
 import xml.etree.ElementTree
 import zlib
+import mimetypes
 
 from .compat import (
     compat_HTMLParseError,
@@ -2575,10 +2576,6 @@ class PostProcessingError(YoutubeDLError):
     indicate an error in the postprocessing task.
     """
 
-    def __init__(self, msg):
-        super(PostProcessingError, self).__init__(msg)
-        self.msg = msg
-
 
 class DownloadCancelled(YoutubeDLError):
     """ Exception raised when the download queue should be interrupted """
@@ -2600,9 +2597,20 @@ class MaxDownloadsReached(DownloadCancelled):
     msg = 'Maximum number of downloads reached, stopping due to --max-downloads'
 
 
-class ThrottledDownload(YoutubeDLError):
+class ReExtractInfo(YoutubeDLError):
+    """ Video info needs to be re-extracted. """
+
+    def __init__(self, msg, expected=False):
+        super().__init__(msg)
+        self.expected = expected
+
+
+class ThrottledDownload(ReExtractInfo):
     """ Download speed below --throttled-rate. """
     msg = 'The download speed is below throttle limit'
+
+    def __init__(self):
+        super().__init__(self.msg, expected=False)
 
 
 class UnavailableVideoError(YoutubeDLError):
@@ -3965,8 +3973,9 @@ def strftime_or_none(timestamp, date_format, default=None):
 def parse_duration(s):
     if not isinstance(s, compat_basestring):
         return None
-
     s = s.strip()
+    if not s:
+        return None
 
     days, hours, mins, secs, ms = [None] * 5
     m = re.match(r'(?:(?:(?:(?P<days>[0-9]+):)?(?P<hours>[0-9]+):)?(?P<mins>[0-9]+):)?(?P<secs>[0-9]+)(?P<ms>\.[0-9]+)?Z?$', s)
@@ -4086,10 +4095,10 @@ class LazyList(collections.abc.Sequence):
     class IndexError(IndexError):
         pass
 
-    def __init__(self, iterable):
+    def __init__(self, iterable, *, reverse=False, _cache=None):
         self.__iterable = iter(iterable)
-        self.__cache = []
-        self.__reversed = False
+        self.__cache = [] if _cache is None else _cache
+        self.__reversed = reverse
 
     def __iter__(self):
         if self.__reversed:
@@ -4155,9 +4164,17 @@ class LazyList(collections.abc.Sequence):
         self.__exhaust()
         return len(self.__cache)
 
-    def reverse(self):
-        self.__reversed = not self.__reversed
-        return self
+    def __reversed__(self):
+        return type(self)(self.__iterable, reverse=not self.__reversed, _cache=self.__cache)
+
+    def __copy__(self):
+        return type(self)(self.__iterable, reverse=self.__reversed, _cache=self.__cache)
+
+    def __deepcopy__(self, memo):
+        # FIXME: This is actually just a shallow copy
+        id_ = id(self)
+        memo[id_] = self.__copy__()
+        return memo[id_]
 
     def __repr__(self):
         # repr and str should mimic a list. So we exhaust the iterable
@@ -4168,6 +4185,10 @@ class LazyList(collections.abc.Sequence):
 
 
 class PagedList:
+
+    class IndexError(IndexError):
+        pass
+
     def __len__(self):
         # This is only useful for tests
         return len(self.getslice())
@@ -4179,7 +4200,9 @@ class PagedList:
         self._cache = {}
 
     def getpage(self, pagenum):
-        page_results = self._cache.get(pagenum) or list(self._pagefunc(pagenum))
+        page_results = self._cache.get(pagenum)
+        if page_results is None:
+            page_results = list(self._pagefunc(pagenum))
         if self._use_cache:
             self._cache[pagenum] = page_results
         return page_results
@@ -4195,7 +4218,9 @@ class PagedList:
         if not isinstance(idx, int) or idx < 0:
             raise TypeError('indices must be non-negative integers')
         entries = self.getslice(idx, idx + 1)
-        return entries[0] if entries else None
+        if not entries:
+            raise self.IndexError()
+        return entries[0]
 
 
 class OnDemandPagedList(PagedList):
@@ -4691,6 +4716,14 @@ def mimetype2ext(mt):
     return subtype.replace('+', '.')
 
 
+def ext2mimetype(ext_or_url):
+    if not ext_or_url:
+        return None
+    if '.' not in ext_or_url:
+        ext_or_url = f'file.{ext_or_url}'
+    return mimetypes.guess_type(ext_or_url)[0]
+
+
 def parse_codecs(codecs_str):
     # http://tools.ietf.org/html/rfc6381
     if not codecs_str:
@@ -4801,10 +4834,11 @@ def determine_protocol(info_dict):
     return compat_urllib_parse_urlparse(url).scheme
 
 
-def render_table(header_row, data, delim=False, extraGap=0, hideEmpty=False):
-    """ Render a list of rows, each as a list of values """
+def render_table(header_row, data, delim=False, extra_gap=0, hide_empty=False):
+    """ Render a list of rows, each as a list of values.
+    Text after a \t will be right aligned """
     def width(string):
-        return len(remove_terminal_sequences(string))
+        return len(remove_terminal_sequences(string).replace('\t', ''))
 
     def get_max_lens(table):
         return [max(width(str(v)) for v in col) for col in zip(*table)]
@@ -4812,21 +4846,24 @@ def render_table(header_row, data, delim=False, extraGap=0, hideEmpty=False):
     def filter_using_list(row, filterArray):
         return [col for (take, col) in zip(filterArray, row) if take]
 
-    if hideEmpty:
+    if hide_empty:
         max_lens = get_max_lens(data)
         header_row = filter_using_list(header_row, max_lens)
         data = [filter_using_list(row, max_lens) for row in data]
 
     table = [header_row] + data
     max_lens = get_max_lens(table)
-    extraGap += 1
+    extra_gap += 1
     if delim:
-        table = [header_row] + [[delim * (ml + extraGap) for ml in max_lens]] + data
-    max_lens[-1] = 0
+        table = [header_row, [delim * (ml + extra_gap) for ml in max_lens]] + data
+        table[1][-1] = table[1][-1][:-extra_gap]  # Remove extra_gap from end of delimiter
     for row in table:
         for pos, text in enumerate(map(str, row)):
-            row[pos] = text + (' ' * (max_lens[pos] - width(text) + extraGap))
-    ret = '\n'.join(''.join(row) for row in table)
+            if '\t' in text:
+                row[pos] = text.replace('\t', ' ' * (max_lens[pos] - width(text))) + ' ' * extra_gap
+            else:
+                row[pos] = text + ' ' * (max_lens[pos] - width(text) + extra_gap)
+    ret = '\n'.join(''.join(row).rstrip() for row in table)
     return ret
 
 
@@ -6525,10 +6562,11 @@ def traverse_obj(
     return default
 
 
+# Deprecated
 def traverse_dict(dictn, keys, casesense=True):
-    ''' For backward compatibility. Do not use '''
-    return traverse_obj(dictn, keys, casesense=casesense,
-                        is_user_input=True, traverse_string=True)
+    write_string('DeprecationWarning: yt_dlp.utils.traverse_dict is deprecated '
+                 'and may be removed in a future version. Use yt_dlp.utils.traverse_obj instead')
+    return traverse_obj(dictn, keys, casesense=casesense, is_user_input=True, traverse_string=True)
 
 
 def variadic(x, allowed_types=(str, bytes)):
@@ -6563,7 +6601,8 @@ def jwt_decode_hs256(jwt):
 
 def supports_terminal_sequences(stream):
     if compat_os_name == 'nt':
-        if get_windows_version() < (10, 0, 10586):
+        from .compat import WINDOWS_VT_MODE  # Must be imported locally
+        if not WINDOWS_VT_MODE or get_windows_version() < (10, 0, 10586):
             return False
     elif not os.getenv('TERM'):
         return False
