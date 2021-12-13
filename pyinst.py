@@ -74,7 +74,7 @@ def version_to_list(version):
 
 
 def dependancy_options():
-    dependancies = [pycryptodome_module(), 'mutagen', 'certifi'] + collect_submodules('websockets')
+    dependancies = [pycryptodome_module(), 'mutagen'] + collect_submodules('websockets')
     excluded_modules = ['test', 'ytdlp_plugins', 'youtube-dl', 'youtube-dlc']
 
     yield from (f'--hidden-import={module}' for module in dependancies)
