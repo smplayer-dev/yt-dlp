@@ -11,7 +11,7 @@ environment:
 
 install: |-
     brew install python3 coreutils
-    /usr/local/bin/python3 -m pip install -U --user pip Pyinstaller==4.5.1 mutagen pycryptodomex websockets certifi
+    /usr/local/bin/python3 -m pip install -U --user pip Pyinstaller==4.5.1 mutagen pycryptodomex websockets
 
 build_script: |-
     /usr/local/bin/python3 devscripts/update-version.py
