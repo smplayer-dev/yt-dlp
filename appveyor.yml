@@ -10,7 +10,7 @@ environment:
     HOMEBREW_NO_AUTO_UPDATE: 1
 
 install: |-
-    brew install coreutils
+    brew install python3 coreutils
     /usr/bin/python3 -m pip install -U --user pip Pyinstaller==4.5.1 mutagen pycryptodomex websockets certifi
 
 build_script: |-
