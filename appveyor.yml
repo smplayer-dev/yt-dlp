@@ -1,0 +1,23 @@
+version: 1.0.{build}-{branch}
+image: macos-mojave
+#image: macos
+
+environment:
+  global:
+    HOMEBREW_NO_INSTALL_CLEANUP: 1
+    CURL_SSL_BACKEND: 'secure-transport'
+    HOMEBREW_FORCE_BREWED_CURL: 1
+    HOMEBREW_NO_AUTO_UPDATE: 1
+
+install: |-
+    brew install coreutils
+    /usr/bin/python3 -m pip install -U --user pip Pyinstaller==4.5.1 mutagen pycryptodomex websockets certifi
+
+build_script: |-
+    /usr/bin/python3 devscripts/update-version.py
+    /usr/bin/python3 devscripts/make_lazy_extractors.py
+    /usr/bin/python3 pyinst.py --onefile
+
+artifacts:
+- path: dist/yt-dlp_macos
+  name: yt-dlp_macos
