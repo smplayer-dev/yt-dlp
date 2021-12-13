@@ -11,12 +11,12 @@ environment:
 
 install: |-
     brew install python3 coreutils
-    /usr/bin/python3 -m pip install -U --user pip Pyinstaller==4.5.1 mutagen pycryptodomex websockets certifi
+    /usr/local/bin/python3 -m pip install -U --user pip Pyinstaller==4.5.1 mutagen pycryptodomex websockets certifi
 
 build_script: |-
-    /usr/bin/python3 devscripts/update-version.py
-    /usr/bin/python3 devscripts/make_lazy_extractors.py
-    /usr/bin/python3 pyinst.py --onefile
+    /usr/local/bin/python3 devscripts/update-version.py
+    /usr/local/bin/python3 devscripts/make_lazy_extractors.py
+    /usr/local/bin/python3 pyinst.py --onefile
 
 artifacts:
 - path: dist/yt-dlp_macos
